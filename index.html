@@ -64,22 +64,6 @@
     </form>
   </div>
 
-  <!-- Include Genesys Web Messaging Script -->
-  <script type="text/javascript" charset="utf-8">
-  (function (g, e, n, es, ys) {
-    g['_genesysJs'] = e;
-    g[e] = g[e] || function () {
-      (g[e].q = g[e].q || []).push(arguments)
-    };
-    g[e].t = 1 * new Date();
-    g[e].c = es;
-    ys = document.createElement('script'); ys.async = 1; ys.src = n; ys.charset = 'utf-8'; document.head.appendChild(ys);
-  })(window, 'Genesys', 'https://apps.mypurecloud.com.au/genesys-bootstrap/genesys.min.js', {
-    environment: 'prod-apse2',
-    deploymentId: '04788ee7-c1bb-4bdc-8626-0334fcd606db'
-  });
-</script>
-
     // Handle form submission
     document.getElementById('startChatForm').addEventListener('submit', function(e) {
       e.preventDefault();
