@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HCF Popup Login Triggered by Bot - Fixed</title>
+  <title>HCF Popup Login Debug</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -23,7 +23,7 @@
       margin-bottom: 20px;
     }
     .login-popup-btn {
-      display: none; /* Hidden until bot trigger */
+      display: none;
       padding: 12px 24px;
       font-size: 18px;
       border: none;
@@ -40,7 +40,7 @@
 <body>
 
   <h1>Welcome to HCF Secure Demo</h1>
-  <p>Start chatting. Secure login will appear when needed.</p>
+  <p>Start chatting. Secure login will appear when triggered.</p>
   <button class="login-popup-btn" id="loginButton" onclick="openLoginPopup()">Login to Continue</button>
 
   <!-- Genesys Web Messaging Script -->
@@ -112,20 +112,32 @@
     }
 
     Genesys("subscribe", "Messenger.ready", function() {
-      console.log("Messenger is ready. Now subscribing to Messenger.receive...");
+      console.log("✅ Messenger is ready. Now subscribing to Messenger.receive...");
+
       Genesys("subscribe", "Messenger.receive", function (event) {
-        console.log("Received Messenger event:", event);
-        if (event.data && event.data.direction === "Inbound" && event.data.message) {
-          const messageText = event.data.message.text || "";
-          console.log("Bot Message Text Received:", messageText);
-          if (messageText.includes("SECURE_LOGIN")) {
-            console.log("LOGIN_TRIGGER Detected — Showing Login Button!");
-            showLoginButton();
+        console.log("💬 Full Messenger.receive Event:", JSON.stringify(event, null, 2));
+
+        try {
+          if (event.data && event.data.direction === "Inbound") {
+            console.log("✅ Inbound message detected.");
+            if (event.data.message) {
+              console.log("📝 Bot message payload:", JSON.stringify(event.data.message, null, 2));
+              const messageText = event.data.message.text || "";
+
+              if (messageText.includes("SECURE_LOGIN")) {
+                console.log("🚀 LOGIN_TRIGGER Detected — Showing Login Button!");
+                showLoginButton();
+              } else {
+                console.log("🔍 LOGIN_TRIGGER Not found in this message.");
+              }
+            } else {
+              console.log("⚠️ No message.text field available.");
+            }
           } else {
-            console.log("LOGIN_TRIGGER Not Found in this message.");
+            console.log("ℹ️ Event is not an Inbound bot message.");
           }
-        } else {
-          console.log("Event ignored (not an inbound message or no text).");
+        } catch (err) {
+          console.error("🔥 Error processing Messenger.receive event:", err);
         }
       });
     });
