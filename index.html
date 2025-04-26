@@ -115,7 +115,7 @@
     Genesys("subscribe", "Messenger.receive", function (event) {
       if (event.data && event.data.direction === "Inbound" && event.data.message) {
         const messageText = event.data.message.text || "";
-        if (messageText.includes("SECURE LOGIN")) {
+        if (messageText.includes("SECURE_LOGIN")) {
           showLoginButton();
         }
       }
