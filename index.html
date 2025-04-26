@@ -4,122 +4,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Member Details Form</title>
+    <title>HCF Demo - Secure Form & Chat</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
             margin: 0;
-        }
-        .container {
-            background: white;
-            padding: 30px 40px;
-            border-radius: 8px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            max-width: 450px;
-            width: 100%;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
         h1 {
             color: #b0003a;
-            font-size: 24px;
-            margin-bottom: 20px;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 30px;
+        }
+        .start-chat-btn {
+            padding: 12px 24px;
+            background-color: #b0003a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .start-chat-btn:hover {
+            background-color: #9a0032;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 400px;
+            border-radius: 8px;
         }
         label {
             display: block;
             margin-top: 15px;
             font-weight: bold;
-            font-size: 14px;
         }
         input, select {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
             border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
+            border-radius: 4px;
         }
-        button {
-            width: 100%;
-            padding: 12px;
+        button.submit-btn {
             margin-top: 20px;
+            padding: 10px 20px;
             background-color: #b0003a;
             color: white;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
             cursor: pointer;
+            width: 100%;
         }
-        button:hover {
+        button.submit-btn:hover {
             background-color: #9a0032;
-        }
-        .thankyou-message {
-            display: none;
-            text-align: center;
-            color: #4CAF50;
-            font-size: 18px;
-            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Before We Connect You</h1>
-        <form id="secureForm">
-            <label for="firstName">First Name</label>
-            <input type="text" id="firstName" name="firstName" required>
+    <h1>Welcome to HCF Demo</h1>
+    <p>Click below when you are ready to talk to an agent.</p>
+    <button class="start-chat-btn" onclick="openSecureForm()">Talk to an Agent</button>
 
-            <label for="memberId">Member ID</label>
-            <input type="text" id="memberId" name="memberId" required>
+    <!-- Secure Form Modal -->
+    <div id="secureFormModal" class="modal">
+        <div class="modal-content">
+            <form id="secureForm">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
 
-            <label for="reason">Reason for Contact</label>
-            <select id="reason" name="reason" required>
-                <option value="">--Please select--</option>
-                <option value="claims">Claims Enquiry</option>
-                <option value="cover">Cover Upgrade</option>
-                <option value="payment">Payment or Billing</option>
-                <option value="other">Other</option>
-            </select>
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" name="phone" required>
 
-            <button type="submit">Submit & Continue</button>
-        </form>
-        <div class="thankyou-message" id="thankyouMessage">
-            Thank you! We'll now connect you to an agent.
+                <label for="reason">Reason for Contact</label>
+                <select id="reason" name="reason" required>
+                    <option value="">--Please select--</option>
+                    <option value="claims">Claims Enquiry</option>
+                    <option value="cover">Cover Upgrade</option>
+                    <option value="payment">Payment or Billing</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <button type="submit" class="submit-btn">Submit & Start Chat</button>
+            </form>
         </div>
     </div>
 
-    <!-- Include Genesys Messenger SDK -->
-    <script src="https://apps.mypurecloud.com.au/webchat/jsapi-v1.js"></script>
+    <!-- Genesys Web Messaging Script -->
+    <script type="text/javascript" charset="utf-8">
+      (function (g, e, n, es, ys) {
+        g['_genesysJs'] = e;
+        g[e] = g[e] || function () {
+          (g[e].q = g[e].q || []).push(arguments)
+        };
+        g[e].t = 1 * new Date();
+        g[e].c = es;
+        ys = document.createElement('script'); ys.async = 1; ys.src = n; ys.charset = 'utf-8'; document.head.appendChild(ys);
+      })(window, 'Genesys', 'https://apps.mypurecloud.com.au/genesys-bootstrap/genesys.min.js', {
+        environment: 'prod-apse2',
+        deploymentId: '04788ee7-c1bb-4bdc-8626-0334fcd606db'
+      });
+    </script>
 
     <script>
+        function openSecureForm() {
+            document.getElementById('secureFormModal').style.display = 'block';
+        }
+
         document.getElementById('secureForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const firstName = document.getElementById('firstName').value;
-            const memberId = document.getElementById('memberId').value;
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
             const reason = document.getElementById('reason').value;
 
             Genesys("command", "Database.set", {
                 messaging: {
                     customAttributes: {
-                        firstName: firstName,
-                        memberId: memberId,
+                        name: name,
+                        phone: phone,
                         reason: reason
                     }
                 }
             });
 
-            document.getElementById('secureForm').style.display = 'none';
-            document.getElementById('thankyouMessage').style.display = 'block';
-
-            // Optional: Close window or focus back to chat after 3 seconds
-            setTimeout(() => {
-                window.close(); // or redirect to chat page if needed
-            }, 3000);
+            document.getElementById('secureFormModal').style.display = 'none';
+            Genesys("command", "Messenger.open");
         });
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('secureFormModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
     </script>
 </body>
 </html>
