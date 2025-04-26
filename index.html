@@ -61,7 +61,7 @@
 
   <script>
     const cognitoDomain = "https://ap-southeast-2sgqt61a7j.auth.ap-southeast-2.amazoncognito.com";
-    const clientId = "22jsp1ol18dnarspvi09jctmr2";
+    const clientId = "o17shi3oe2dj5po2fdkhga9o9";
     const redirectUri = "https://asharma99.github.io/genesys-webmessaging-demo/index.html";
 
     let loginWindow = null;
@@ -110,37 +110,6 @@
     function showLoginButton() {
       document.getElementById("loginButton").style.display = "block";
     }
-
-    Genesys("subscribe", "Messenger.ready", function() {
-      console.log("✅ Messenger is ready. Now subscribing to Messenger.receive...");
-
-      Genesys("subscribe", "Messenger.receive", function (event) {
-        console.log("💬 Full Messenger.receive Event:", JSON.stringify(event, null, 2));
-
-        try {
-          if (event.data && event.data.direction === "Inbound") {
-            console.log("✅ Inbound message detected.");
-            if (event.data.message) {
-              console.log("📝 Bot message payload:", JSON.stringify(event.data.message, null, 2));
-              const messageText = event.data.message.text || "";
-
-              if (messageText.includes("SECURE_LOGIN")) {
-                console.log("🚀 LOGIN_TRIGGER Detected — Showing Login Button!");
-                showLoginButton();
-              } else {
-                console.log("🔍 LOGIN_TRIGGER Not found in this message.");
-              }
-            } else {
-              console.log("⚠️ No message.text field available.");
-            }
-          } else {
-            console.log("ℹ️ Event is not an Inbound bot message.");
-          }
-        } catch (err) {
-          console.error("🔥 Error processing Messenger.receive event:", err);
-        }
-      });
-    });
   </script>
 
 </body>
