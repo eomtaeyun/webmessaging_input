@@ -112,22 +112,26 @@
     }
 
     // Listen for Bot Message with LOGIN_TRIGGER keyword
+    Genesys("subscribe", "Messenger.ready", function() {
+    console.log("Messenger is fully ready.");
+
     Genesys("subscribe", "Messenger.receive", function (event) {
-  console.log("Received Messenger event:", event);
+    console.log("Received Messenger event:", event);
 
-  if (event.data && event.data.direction === "Inbound" && event.data.message) {
-    const messageText = event.data.message.text || "";
-    console.log("Bot Message Text Received:", messageText);
+    if (event.data && event.data.direction === "Inbound" && event.data.message) {
+      const messageText = event.data.message.text || "";
+      console.log("Bot Message Text Received:", messageText);
 
-    if (messageText.includes("SECURE_LOGIN")) {
-      console.log("SECURE_LOGIN Detected — Showing Login Button!");
-      showLoginButton();
+      if (messageText.includes("SECURE_LOGIN")) {
+        console.log("LOGIN_TRIGGER Detected — Showing Login Button!");
+        showLoginButton();
+      } else {
+        console.log("LOGIN_TRIGGER Not Found in this message.");
+      }
     } else {
-      console.log("SECURE_LOGIN Not Found in this message.");
+      console.log("Event ignored (not an inbound message or no text).");
     }
-  } else {
-    console.log("Event ignored (not an inbound message or no text).");
-  }
+  });
 });
   </script>
 </body>
