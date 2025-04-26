@@ -58,59 +58,5 @@
       deploymentId: '04788ee7-c1bb-4bdc-8626-0334fcd606db'
     });
   </script>
-
-  <script>
-    const cognitoDomain = "https://ap-southeast-2sgqt61a7j.auth.ap-southeast-2.amazoncognito.com";
-    const clientId = "o17shi3oe2dj5po2fdkhga9o9";
-    const redirectUri = "https://asharma99.github.io/genesys-webmessaging-demo/index.html";
-
-    let loginWindow = null;
-
-    function openLoginPopup() {
-      const loginUrl = `${cognitoDomain}/login?response_type=token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid+profile+email+phone`;
-      loginWindow = window.open(loginUrl, "LoginWindow", "width=600,height=600");
-    }
-
-    function parseTokenFromPopup(hash) {
-      const result = hash.split('&').reduce(function (res, item) {
-        const parts = item.split('=');
-        res[parts[0]] = parts[1];
-        return res;
-      }, {});
-
-      if (result.id_token) {
-        const payload = JSON.parse(atob(result.id_token.split('.')[1]));
-        const name = payload.name || "";
-        const email = payload.email || "";
-        const phone = payload.phone_number || "";
-
-        Genesys("command", "Database.set", {
-          messaging: {
-            customAttributes: {
-              name: name,
-              email: email,
-              phone: phone
-            }
-          }
-        });
-
-        Genesys("command", "Messenger.open");
-      }
-    }
-
-    window.addEventListener("message", function(event) {
-      if (event.data && typeof event.data === "string" && event.data.startsWith("id_token")) {
-        parseTokenFromPopup(event.data);
-        if (loginWindow) {
-          loginWindow.close();
-        }
-      }
-    }, false);
-
-    function showLoginButton() {
-      document.getElementById("loginButton").style.display = "block";
-    }
-  </script>
-
 </body>
 </html>
