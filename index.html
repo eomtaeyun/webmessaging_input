@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HCF Popup Login Demo</title>
+  <title>HCF Popup Login Triggered by Bot</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -23,7 +23,7 @@
       margin-bottom: 20px;
     }
     .login-popup-btn {
-      display: block; /* Hidden initially */
+      display: none; /* Hidden until bot trigger */
       padding: 12px 24px;
       font-size: 18px;
       border: none;
@@ -40,7 +40,7 @@
 <body>
 
   <h1>Welcome to HCF Secure Demo</h1>
-  <p>Start chatting and log in only when needed.</p>
+  <p>Start chatting. Secure login will appear when needed.</p>
   <button class="login-popup-btn" id="loginButton" onclick="openLoginPopup()">Login to Continue</button>
 
   <!-- Genesys Web Messaging Script -->
@@ -61,7 +61,7 @@
 
   <script>
     const cognitoDomain = "https://ap-southeast-2sgqt61a7j.auth.ap-southeast-2.amazoncognito.com";
-    const clientId = "6ovmm4bfdu31vpkb7gmnr1649n";
+    const clientId = "22jsp1ol18dnarspvi09jctmr2";
     const redirectUri = "https://asharma99.github.io/genesys-webmessaging-demo/index.html";
 
     let loginWindow = null;
@@ -107,10 +107,19 @@
       }
     }, false);
 
-    // To show login button manually if bot instructs user
     function showLoginButton() {
       document.getElementById("loginButton").style.display = "block";
     }
+
+    // Listen for Bot Message with LOGIN_TRIGGER keyword
+    Genesys("subscribe", "Messenger.receive", function (event) {
+      if (event.data && event.data.direction === "Inbound" && event.data.message) {
+        const messageText = event.data.message.text || "";
+        if (messageText.includes("SECURE LOGIN")) {
+          showLoginButton();
+        }
+      }
+    });
   </script>
 
 </body>
