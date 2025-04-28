@@ -54,7 +54,7 @@
           let triggerDetected = false;
 
           // Check normal text
-          if (event.data.message.text && event.data.message.text.includes("TRIGGER_SECURE_LOGIN")) {
+          if (event.data.message.text && event.data.message.text.includes("Ready")) {
             triggerDetected = true;
           }
 
@@ -64,7 +64,7 @@
               if (item.contentType === "ButtonResponse" &&
                   item.buttonResponse &&
                   item.buttonResponse.payload &&
-                  item.buttonResponse.payload.includes("TRIGGER_SECURE_LOGIN")) {
+                  item.buttonResponse.payload.includes("Ready")) {
                 triggerDetected = true;
               }
             });
