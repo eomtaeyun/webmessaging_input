@@ -38,7 +38,7 @@
   <script type="text/javascript" charset="utf-8">
     const cognitoDomain = "https://ap-southeast-2sgqt61a7j.auth.ap-southeast-2.amazoncognito.com";
     const clientId = "4ceeulj5phibg2rdolqoto3cs5"; // Update this if needed
-    const redirectUri = "https://asharma99.github.io/genesys-webmessaging-demo/index_clean_login_url.html";
+    const redirectUri = "https://asharma99.github.io/genesys-webmessaging-demo/index_clean_url.html";
 
     function redirectToCognito() {
       const loginUrl = `${cognitoDomain}/login?response_type=token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid+profile+email+phone`;
