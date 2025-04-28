@@ -2,9 +2,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Secure Login - HCF Demo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HCF Secure Login</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -32,31 +32,14 @@
 </head>
 <body>
 
-  <h1>Redirecting you to Secure Login...</h1>
-  <p>If you are not redirected automatically, <a id="manualLink" href="#">click here</a>.</p>
+  <h1>Redirecting to Secure Login...</h1>
+  <p>If you are not redirected, <a id="manualLink" href="#">click here</a>.</p>
 
-  <!-- Genesys Messenger Script (for Database.set after login) -->
   <script type="text/javascript" charset="utf-8">
-    (function (g, e, n, es, ys) {
-      g['_genesysJs'] = e;
-      g[e] = g[e] || function () {
-        (g[e].q = g[e].q || []).push(arguments)
-      };
-      g[e].t = 1 * new Date();
-      g[e].c = es;
-      ys = document.createElement('script'); ys.async = 1; ys.src = n; ys.charset = 'utf-8'; document.head.appendChild(ys);
-    })(window, 'Genesys', 'https://apps.mypurecloud.com.au/genesys-bootstrap/genesys.min.js', {
-      environment: 'prod-apse2',
-      deploymentId: '04788ee7-c1bb-4bdc-8626-0334fcd606db'
-    });
-  </script>
+    const cognitoDomain = "https://ap-southeast-2sgqt61a7j.auth.ap-southeast-2.amazoncognito.com";
+    const clientId = "4ceeulj5phibg2rdolqoto3cs5"; // Update this if needed
+    const redirectUri = "https://asharma99.github.io/genesys-webmessaging-demo/index_clean_login_url.html";
 
-  <script>
-    const cognitoDomain = "https://ap-southeast-2vscrdgihp.auth.ap-southeast-2.amazoncognito.com";
-    const clientId = "4ceeulj5phibg2rdolqoto3cs5";
-    const redirectUri = "https://asharma99.github.io/genesys-webmessaging-demo/index_clean_url.html";
-
-    // Immediately redirect to Cognito login
     function redirectToCognito() {
       const loginUrl = `${cognitoDomain}/login?response_type=token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid+profile+email+phone`;
       window.location.href = loginUrl;
@@ -64,11 +47,6 @@
 
     document.getElementById("manualLink").addEventListener("click", redirectToCognito);
 
-    window.onload = function() {
-      setTimeout(redirectToCognito, 1000); // Auto redirect after 1 sec
-    };
-
-    // After coming back from Cognito Hosted UI
     function parseTokenFromUrl() {
       const hash = window.location.hash.substr(1);
       const result = hash.split('&').reduce(function (res, item) {
@@ -83,29 +61,25 @@
         const email = payload.email || "";
         const phone = payload.phone_number || "";
 
-        Genesys("command", "Database.set", {
-          messaging: {
-            customAttributes: {
-              name: name,
-              email: email,
-              phone: phone
-            }
-          }
-        });
+        // Send the data back to the opener page
+        if (window.opener) {
+          window.opener.postMessage({
+            source: "HCFLogin",
+            name: name,
+            email: email,
+            phone: phone
+          }, "*");
+        }
 
         setTimeout(function() {
-          window.close(); // Close the tab automatically after success (optional)
+          window.close();
         }, 2000);
-      }
-    }
-
-    window.onload = function() {
-      if (window.location.hash.includes("id_token")) {
-        parseTokenFromUrl();
       } else {
         setTimeout(redirectToCognito, 1000);
       }
-    };
+    }
+
+    window.onload = parseTokenFromUrl;
   </script>
 
 </body>
