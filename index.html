@@ -57,6 +57,15 @@
       environment: 'prod-apse2',
       deploymentId: '04788ee7-c1bb-4bdc-8626-0334fcd606db'
     });
+    Genesys("command", "Database.set", {
+          messaging: {
+            customAttributes: {
+              name: name,
+              email: email,
+              phone: phone
+            }
+          }
+        });
   </script>
 </body>
 </html>
