@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HCF Secure Chat</title>
+  <title>HCF Secure Chat with Toaster Login</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -28,7 +28,7 @@
 <body>
 
   <h1>Welcome to HCF Secure Chat</h1>
-  <p>Please start chatting or complete your secure login when prompted.</p>
+  <p>Start chatting. Secure login will trigger when needed.</p>
 
   <script type="text/javascript" charset="utf-8">
     (function (g, e, n, es, ys) {
@@ -44,24 +44,41 @@
       deploymentId: '04788ee7-c1bb-4bdc-8626-0334fcd606db'
     });
 
-    // Listen for secure login data
-    window.addEventListener("message", function(event) {
-      console.log("📩 Message received from login page:", event.data);
-      if (event.data && typeof event.data === "object" && event.data.source === "HCFLogin") {
-        const { name, email, phone } = event.data;
+    Genesys("subscribe", "Messenger.ready", function() {
+      console.log("✅ Messenger ready - listening for bot messages");
 
-        Genesys("command", "Database.set", {
-          messaging: {
-            customAttributes: {
-              name: name,
-              email: email,
-              phone: phone
-            }
+      Genesys("subscribe", "Messenger.receive", function(event) {
+        if (event.data && event.data.direction === "Inbound" && event.data.message) {
+          const messageText = event.data.message.text || "";
+
+          console.log("💬 Bot Message Received:", messageText);
+
+          if (messageText.includes("TRIGGER_SECURE_LOGIN")) {
+            console.log("🚀 Secure Login Trigger detected! Showing toaster popup.");
+
+            Genesys("command", "Messenger.customPlugin", {
+              type: "toasterPlugin",
+              data: {
+                title: "Secure Verification",
+                body: "Please complete your secure login to continue.",
+                actions: [
+                  {
+                    text: "Secure Login",
+                    type: "url",
+                    payload: {
+                      url: "https://asharma99.github.io/genesys-webmessaging-demo/secureform.html"
+                    }
+                  },
+                  {
+                    text: "Cancel",
+                    type: "close"
+                  }
+                ]
+              }
+            });
           }
-        });
-
-        console.log("✅ Participant data injected into Messenger:", { name, email, phone });
-      }
+        }
+      });
     });
   </script>
 
