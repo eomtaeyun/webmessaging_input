@@ -45,59 +45,60 @@
     });
 
     Genesys("subscribe", "Messenger.ready", function() {
-      console.log("✅ Messenger ready - listening for bot messages");
+  console.log("✅ Messenger ready - listening for bot messages");
 
-      Genesys("subscribe", "Messenger.receive", function(event) {
-        if (event.data && event.data.direction === "Inbound" && event.data.message) {
-          console.log("💬 Message received:", event.data.message);
+  Genesys("subscribe", "Messenger.receive", function(event) {
+    console.log("💬 Full Messenger.receive event:", JSON.stringify(event, null, 2));
 
-          let triggerDetected = false;
+    let triggerDetected = false;
 
-          // Check normal text
-          if (event.data.message.text && event.data.message.text.includes("Ready")) {
-            triggerDetected = true;
-          }
+    // Check normal text
+    const normalText = event.data.message?.text || event.data.body?.text || "";
+    console.log("📝 Normal Text Detected:", normalText);
 
-          // Check ButtonResponse (structured payload)
-          if (event.data.message.content && Array.isArray(event.data.message.content)) {
-            event.data.message.content.forEach(item => {
-              if (item.contentType === "ButtonResponse" &&
-                  item.buttonResponse &&
-                  item.buttonResponse.payload &&
-                  item.buttonResponse.payload.includes("Ready")) {
-                triggerDetected = true;
-              }
-            });
-          }
+    if (normalText.toLowerCase().includes("ready")) {
+      triggerDetected = true;
+    }
 
-          if (triggerDetected) {
-            console.log("🚀 TRIGGER_SECURE_LOGIN detected - showing toaster popup!");
-
-            Genesys("command", "Messenger.customPlugin", {
-              type: "toasterPlugin",
-              data: {
-                title: "Secure Verification",
-                body: "Please complete your secure login to continue.",
-                actions: [
-                  {
-                    text: "Secure Login",
-                    type: "url",
-                    payload: {
-                      url: "https://asharma99.github.io/genesys-webmessaging-demo/secureform.html"
-                    }
-                  },
-                  {
-                    text: "Cancel",
-                    type: "close"
-                  }
-                ]
-              }
-            });
-          }
+    // Check ButtonResponse (structured payload)
+    if (event.data.message?.content && Array.isArray(event.data.message.content)) {
+      event.data.message.content.forEach(item => {
+        if (item.contentType === "ButtonResponse" &&
+            item.buttonResponse &&
+            item.buttonResponse.payload &&
+            item.buttonResponse.payload.includes("ready")) {
+          triggerDetected = true;
         }
       });
-    });
-  </script>
+    }
+
+    if (triggerDetected) {
+      console.log("🚀 Ready detected - showing toaster popup!");
+
+      Genesys("command", "Messenger.customPlugin", {
+        type: "toasterPlugin",
+        data: {
+          title: "Secure Verification",
+          body: "Please complete your secure login to continue.",
+          actions: [
+            {
+              text: "Secure Login",
+              type: "url",
+              payload: {
+                url: "https://asharma99.github.io/genesys-webmessaging-demo/secureform.html"
+              }
+            },
+            {
+              text: "Cancel",
+              type: "close"
+            }
+          ]
+        }
+      });
+    }
+  });
+});
+</script>
 
 </body>
 </html>
