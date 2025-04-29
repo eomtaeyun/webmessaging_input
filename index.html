@@ -45,41 +45,24 @@
     });
 
     Genesys("subscribe", "Messenger.ready", function() {
-      console.log("✅ Messenger ready - listening for bot messages");
+  console.log("✅ Messenger ready - launching secure form toaster immediately!");
 
-      Genesys("subscribe", "Messenger.receive", function(event) {
-        console.log("💬 Messenger.receive event:", JSON.stringify(event, null, 2));
-
-        let triggerDetected = false;
-
-        const normalText = event.data.message?.text || event.data.body?.text || "";
-
-        if (normalText.toLowerCase().includes("trigger_secure_form")) {
-          triggerDetected = true;
-        }
-
-        if (triggerDetected) {
-          console.log("🚀 TRIGGER_SECURE_FORM detected - launching secure form toaster!");
-
-          Genesys("command", "Messenger.customPlugin", {
-            type: "toasterPlugin",
-            data: {
-              title: "Secure Verification",
-              body: `
-                <div style="display:flex; flex-direction:column;">
-                  <input type="text" id="secure_name" placeholder="Full Name" style="margin-bottom:8px; padding:8px;">
-                  <input type="text" id="secure_dob" placeholder="Date of Birth (DD/MM/YYYY)" style="margin-bottom:8px; padding:8px;">
-                  <input type="text" id="secure_memberid" placeholder="Member ID" style="margin-bottom:8px; padding:8px;">
-                  <button onclick="submitSecureForm()" style="padding:10px; background-color:#b0003a; color:white; border:none; margin-top:8px;">Submit</button>
-                </div>
-              `,
-              actions: []
-            }
-          });
-        }
-      });
-    });
-
+  Genesys("command", "Messenger.customPlugin", {
+    type: "toasterPlugin",
+    data: {
+      title: "Secure Verification",
+      body: `
+        <div style="display:flex; flex-direction:column;">
+          <input type="text" id="secure_name" placeholder="Full Name" style="margin-bottom:8px; padding:8px;">
+          <input type="text" id="secure_dob" placeholder="Date of Birth (DD/MM/YYYY)" style="margin-bottom:8px; padding:8px;">
+          <input type="text" id="secure_memberid" placeholder="Member ID" style="margin-bottom:8px; padding:8px;">
+          <button onclick="submitSecureForm()" style="padding:10px; background-color:#b0003a; color:white; border:none; margin-top:8px;">Submit</button>
+        </div>
+      `,
+      actions: []
+    }
+  });
+});
     function submitSecureForm() {
       const name = document.getElementById('secure_name').value;
       const dob = document.getElementById('secure_dob').value;
